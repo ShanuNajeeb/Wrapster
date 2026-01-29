@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wrapsters - Bespoke Auto Protection & Car Wrapping Dubai</title>
+    <meta name="description" content="Dubai's leading destination for Bespoke Auto Protection, PPF, and Luxury Car Wrapping." />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Staatliches&display=swap');
+        
+        :root {
+            --brand-yellow: #ffb703;
+            --brand-black: #0a0a0a;
+            --brand-gray: #1a1a1a;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+            background-color: var(--brand-black);
+            color: #fff;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .font-brand {
+            font-family: 'Staatliches', cursive;
+            letter-spacing: 0.05em;
+        }
+
+        /* Premium Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--brand-yellow);
+            border-radius: 10px;
+        }
+
+        /* Utility classes */
+        .text-yellow-brand { color: var(--brand-yellow); }
+        .bg-yellow-brand { background-color: var(--brand-yellow); }
+        .transition-premium { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        
+        .nav-link {
+            position: relative;
+            text-transform: uppercase;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--brand-yellow);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+    </style>
+    <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@^19.2.4",
+        "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+        "react/": "https://esm.sh/react@^19.2.4/",
+        "lucide-react": "https://esm.sh/lucide-react@^0.563.0"
+      }
+    }
+    </script>
+</head>
+<body>
+    <div id="root"></div>
+</body>
+</html>
