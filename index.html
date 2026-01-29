@@ -5,10 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Wrapsters - Bespoke Auto Protection & Car Wrapping Dubai</title>
     <meta name="description" content="Dubai's leading destination for Bespoke Auto Protection, PPF, and Luxury Car Wrapping." />
+    
+    <!-- CDNs -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin></script>
+    <script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.min.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Staatliches&display=swap');
         
@@ -24,6 +29,8 @@
             background-color: var(--brand-black);
             color: #fff;
             -webkit-font-smoothing: antialiased;
+            margin: 0;
+            padding: 0;
         }
 
         .font-brand {
@@ -43,44 +50,478 @@
             border-radius: 10px;
         }
 
-        /* Utility classes */
-        .text-yellow-brand { color: var(--brand-yellow); }
-        .bg-yellow-brand { background-color: var(--brand-yellow); }
         .transition-premium { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .shadow-3xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6); }
         
-        .nav-link {
-            position: relative;
-            text-transform: uppercase;
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 0.1em;
+        /* Utility for consistent line capping */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--brand-yellow);
-            transition: width 0.3s ease;
-        }
-        .nav-link:hover::after {
-            width: 100%;
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
     </style>
-    <script type="importmap">
-    {
-      "imports": {
-        "react": "https://esm.sh/react@^19.2.4",
-        "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-        "react/": "https://esm.sh/react@^19.2.4/",
-        "lucide-react": "https://esm.sh/lucide-react@^0.563.0"
-      }
-    }
-    </script>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.4",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0"
+  }
+}
+</script>
 </head>
 <body>
     <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        
+        // Robust Icon component that prioritizes Lucide but falls back to FontAwesome
+        const Icon = ({ name, size = 20, className = "", fill = "none" }) => {
+            const Lucide = window.LucideReact;
+            
+            // Map Lucide names to FontAwesome icons for fallback
+            const faMap = {
+                'Globe': 'fa-globe',
+                'Phone': 'fa-phone',
+                'Mail': 'fa-envelope',
+                'Star': 'fa-star',
+                'ChevronRight': 'fa-chevron-right',
+                'ShieldCheck': 'fa-shield-halved',
+                'Zap': 'fa-bolt',
+                'Heart': 'fa-heart',
+                'Award': 'fa-award',
+                'Shield': 'fa-shield',
+                'Sparkles': 'fa-wand-magic-sparkles',
+                'TrendingUp': 'fa-chart-line',
+                'Calendar': 'fa-calendar',
+                'ArrowRight': 'fa-arrow-right',
+                'MapPin': 'fa-location-dot',
+                'Clock': 'fa-clock',
+                'Instagram': 'fa-instagram',
+                'Facebook': 'fa-facebook-f',
+                'Youtube': 'fa-youtube',
+                'Twitter': 'fa-x-twitter',
+                'ShoppingBag': 'fa-bag-shopping',
+                'Users': 'fa-users',
+                'Check': 'fa-check'
+            };
+
+            const isBrand = ['Instagram', 'Facebook', 'Youtube', 'Twitter'].includes(name);
+            const faClass = faMap[name] || 'fa-question';
+            const iconSet = isBrand ? 'fa-brands' : 'fa-solid';
+
+            // We use FontAwesome for brands to be safe, Lucide for utility
+            if (!isBrand && Lucide && Lucide[name]) {
+                const Component = Lucide[name];
+                return <Component size={size} className={className} fill={fill} />;
+            }
+
+            return <i className={`${iconSet} ${faClass} ${className}`} style={{ fontSize: size, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}></i>;
+        };
+
+        // --- Standardized UI Constants ---
+        const SECTION_PADDING = "py-32 px-6";
+        const HEADING_STYLE = "font-brand text-5xl md:text-6xl uppercase tracking-[0.1em] leading-tight text-center";
+        const SUBHEADING_STYLE = "text-[11px] font-black uppercase tracking-[0.4em] text-center mb-6";
+        const BODY_STYLE = "text-gray-400 text-[12px] font-bold uppercase tracking-[0.2em] leading-relaxed text-center max-w-4xl mx-auto";
+        const BUTTON_STYLE = "px-12 py-5 rounded-sm font-black uppercase text-[11px] tracking-[0.25em] transition-premium flex items-center justify-center gap-3";
+
+        // --- Components ---
+
+        const Header = () => (
+            <header className="fixed top-0 left-0 right-0 z-[100] shadow-2xl">
+                <div className="bg-[#ffb703] text-black py-2.5 px-8 flex justify-between items-center text-[10px] font-black uppercase tracking-widest border-b border-black/5">
+                    <div className="flex gap-10">
+                        <a href="tel:+971501535251" className="flex items-center gap-2 hover:opacity-75 transition-premium">
+                            <Icon name="Phone" size={12} fill="currentColor" /> +971 50 153 5251
+                        </a>
+                        <a href="mailto:support@wrapsters.ae" className="flex items-center gap-2 hover:opacity-75 transition-premium lowercase font-semibold tracking-normal">
+                            <Icon name="Mail" size={12} fill="currentColor" /> support@wrapsters.ae
+                        </a>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Icon name="Star" size={12} fill="currentColor" />
+                        <span className="italic">DUBAI'S #1 CAR PROTECTION</span>
+                    </div>
+                </div>
+                <nav className="bg-white py-4 px-8 flex justify-between items-center relative">
+                    <div className="flex items-center">
+                        <div className="bg-black text-[#ffb703] px-5 py-2 italic font-black text-3xl font-brand">WRAPSTERS</div>
+                        <div className="flex flex-col leading-[1.1] border-l-2 border-black ml-4 pl-4 font-black text-[10px] tracking-[0.2em] text-black">
+                            <span>AE.</span>
+                            <span>BESPOKE.</span>
+                            <span>AUTO.</span>
+                        </div>
+                    </div>
+                    <div className="hidden lg:flex items-center gap-10 text-black font-black text-[11px] uppercase tracking-widest">
+                        <a href="#" className="text-[#ffb703]">HOME</a>
+                        <a href="#" className="hover:text-[#ffb703] transition-premium">COMPANY</a>
+                        <a href="#" className="hover:text-[#ffb703] transition-premium">SERVICES</a>
+                        <a href="#" className="hover:text-[#ffb703] transition-premium">GALLERY</a>
+                        <a href="#" className="hover:text-[#ffb703] transition-premium">TESTIMONIALS</a>
+                        <a href="#" className="hover:text-[#ffb703] transition-premium">BLOGS</a>
+                        <a href="#" className="hover:text-[#ffb703] transition-premium">CONTACT</a>
+                    </div>
+                    <div className="flex items-center gap-6">
+                        <div className="hidden sm:flex items-center gap-2 cursor-pointer hover:text-[#ffb703] transition-premium text-black text-[11px] font-black uppercase tracking-widest">
+                            <Icon name="Globe" size={18} />
+                            <span>UAE</span>
+                        </div>
+                        <button className="bg-black text-white px-8 py-3.5 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-[#ffb703] hover:text-black transition-premium shadow-lg">
+                            BOOK APPOINTMENT
+                        </button>
+                    </div>
+                </nav>
+                <div className="h-[4px] bg-[#ffb703] w-full"></div>
+            </header>
+        );
+
+        const Hero = () => (
+            <section className="relative min-h-screen flex flex-col items-center justify-center pt-32 pb-20 px-6 bg-[#0a0a0a] overflow-hidden">
+                <div className="absolute inset-0 pointer-events-none">
+                    <img src="https://images.unsplash.com/photo-1614200171366-4158773a6a2a?auto=format&fit=crop&q=80&w=2000" alt="Luxury Car Wrapping" className="w-full h-full object-cover scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/80 via-[#0a0a0a]/95 to-[#0a0a0a]"></div>
+                </div>
+                <div className="relative z-10 max-w-6xl mx-auto text-center">
+                    <div className={`${SUBHEADING_STYLE} text-[#ffb703] mb-10`}>
+                        <i className="fa-solid fa-crown text-xs mr-3"></i>
+                        Bespoke Auto Protection & Styling
+                    </div>
+                    <h1 className="text-white text-7xl md:text-9xl font-black uppercase tracking-tight font-brand mb-10 leading-[0.85] drop-shadow-2xl">
+                        Auto Protection & <br />
+                        <span className="text-[#ffb703]">Car Wrapping</span>
+                    </h1>
+                    <p className={`${BODY_STYLE} text-gray-300 text-base md:text-lg mb-16 opacity-90`}>
+                        Welcome to <span className="text-white font-bold underline decoration-[#ffb703] underline-offset-4">Wrapsters</span> – we don’t just work on cars; we craft masterpieces. Redefining automotive care with elite expertise in the heart of Dubai.
+                    </p>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-28">
+                        <button className={`${BUTTON_STYLE} bg-[#ffb703] text-black hover:bg-white w-full sm:w-auto shadow-2xl`}>
+                            Our Services
+                        </button>
+                        <button className={`${BUTTON_STYLE} text-white border border-white/20 hover:text-[#ffb703] w-full sm:w-auto`}>
+                            View Gallery <Icon name="ChevronRight" size={14} />
+                        </button>
+                    </div>
+                </div>
+            </section>
+        );
+
+        const Services = () => {
+            const wrapstersServices = [
+                { tag: "PROTECTION", title: "Paint Protection Film (PPF)", desc: "Invisible armor for long-lasting shine and total body protection.", label: "Dubai's Finest", detail: "Self-Healing", img: "https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&q=80&w=600" },
+                { tag: "STYLING", title: "Wrapping & Transforming", desc: "Complete color changes and bespoke vinyl designs.", label: "Custom Fit", detail: "Global Brands", img: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=600", bestSeller: true },
+                { tag: "COATING", title: "Ceramic Coating", desc: "Nano-ceramic technology providing deep mirror gloss.", label: "Nano-Tech", detail: "Long-Term", img: "https://images.unsplash.com/photo-1597839219216-a773cb2473e4?auto=format&fit=crop&q=80&w=600" },
+                { tag: "DETAILING", title: "Detailing & Cleaning", desc: "Meticulous interior and exterior detailing for factory looks.", label: "Deep Clean", detail: "Expert Craft", img: "https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?auto=format&fit=crop&q=80&w=600" },
+                { tag: "STYLING", title: "Car Tinting & Restoration", desc: "High-quality window films and light restoration.", label: "Precision", detail: "Heat Control", img: "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&q=80&w=600" }
+            ];
+            return (
+                <section id="services" className={`bg-white ${SECTION_PADDING}`}>
+                    <div className="max-w-[1440px] mx-auto">
+                        <div className={`${SUBHEADING_STYLE} text-[#ffb703]`}>Our Signature Selection</div>
+                        <h2 className={`${HEADING_STYLE} text-black mb-12`}>Premium Auto Care</h2>
+                        <p className={`${BODY_STYLE} mb-24`}>Experience the pinnacle of automotive care in Dubai. Our signature protection services are engineered to preserve your vehicle's value while enhancing its aesthetic appeal.</p>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-24">
+                            {wrapstersServices.map((pkg, idx) => (
+                                <div key={idx} className="flex flex-col bg-white border border-gray-100 shadow-sm hover:shadow-2xl transition-premium group relative text-left rounded-sm overflow-hidden transform hover:-translate-y-2">
+                                    {pkg.bestSeller && (
+                                        <div className="absolute top-4 left-4 bg-black text-white text-[9px] font-black py-2 px-4 rounded-full z-10 tracking-widest flex items-center gap-2">
+                                            <Icon name="Zap" size={10} className="text-[#ffb703]" /> MOST WANTED
+                                        </div>
+                                    )}
+                                    <div className="relative aspect-[4/5] overflow-hidden">
+                                        <img src={pkg.img} alt={pkg.title} className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110" />
+                                    </div>
+                                    <div className="p-8 flex-grow flex flex-col">
+                                        <div className="text-[#ffb703] text-[10px] font-black uppercase tracking-[0.25em] mb-4">{pkg.tag}</div>
+                                        <h4 className="text-black font-black text-sm uppercase tracking-widest mb-4 line-clamp-2 h-10">{pkg.title}</h4>
+                                        <p className="text-gray-500 text-[11px] font-bold uppercase tracking-widest opacity-80 leading-relaxed mb-8 flex-grow line-clamp-3">{pkg.desc}</p>
+                                        <div className="border-t border-gray-100 pt-6 flex items-center justify-between">
+                                            <div className="flex flex-col">
+                                                <span className="text-black font-black text-[11px] uppercase tracking-widest">{pkg.label}</span>
+                                                <span className="text-gray-400 text-[9px] font-black uppercase tracking-[0.2em] mt-1">{pkg.detail}</span>
+                                            </div>
+                                            <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-[#ffb703] group-hover:text-black transition-premium">
+                                                <Icon name="ChevronRight" size={18} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        const PPFFeature = () => {
+            const [activeCar, setActiveCar] = useState('PORSCHE 911');
+            const cars = ['PORSCHE 911', 'TESLA MODEL 3', 'RANGE ROVER'];
+            const coverages = [
+                { name: 'FULL FRONT END', features: 'Hood, Fenders, Mirror Caps' },
+                { name: 'FULL FRONT END & ROCKERS', features: 'Plus Side Skirts' },
+                { name: 'FULL CAR', features: 'Total Exterior Protection' },
+                { name: 'WINDOW TINT', features: 'Heat & UV Rejection' }
+            ];
+            return (
+                <section className={`bg-[#0a0a0a] ${SECTION_PADDING} border-t border-white/5`}>
+                    <div className="max-w-7xl mx-auto">
+                        <div className={`${SUBHEADING_STYLE} text-[#ffb703]`}>Invisible Armor</div>
+                        <h2 className={`${HEADING_STYLE} text-white mb-16 uppercase`}>PAINT PROTECTION FILM (PPF)</h2>
+                        
+                        <div className="flex justify-center mb-24">
+                            <div className="bg-[#111] rounded-full p-1.5 border border-white/5 flex gap-2">
+                                {cars.map(car => (
+                                    <button key={car} onClick={() => setActiveCar(car)} className={`px-10 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-premium ${activeCar === car ? 'bg-[#ffb703] text-black shadow-lg shadow-yellow-500/10' : 'text-gray-500 hover:text-white'}`}>
+                                        {car}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col lg:flex-row items-center gap-16">
+                            <div className="w-full lg:w-2/5 flex flex-col gap-4 text-left">
+                                {coverages.map(cov => (
+                                    <div key={cov.name} className="flex flex-col px-10 py-8 rounded-xl border bg-[#111] border-white/5 text-gray-400 hover:border-[#ffb703]/30 transition-premium cursor-pointer group relative">
+                                        <div className="flex justify-between items-center mb-1">
+                                            <span className="text-[12px] font-black uppercase tracking-widest group-hover:text-[#ffb703]">{cov.name}</span>
+                                            <Icon name="ArrowRight" size={16} className="opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-premium text-[#ffb703]" />
+                                        </div>
+                                        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-600">{cov.features}</span>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="w-full lg:w-3/5">
+                                <div className="p-6 border border-white/5 rounded-[2rem] bg-gradient-to-br from-[#111] to-black shadow-3xl">
+                                    <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1200" className="w-full rounded-2xl grayscale hover:grayscale-0 transition-all duration-1000 shadow-2xl" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        const WhyChoose = () => (
+            <section className={`bg-[#0f0f0f] ${SECTION_PADDING} border-y border-white/5`}>
+                <div className="max-w-7xl mx-auto text-center">
+                    <div className={`${SUBHEADING_STYLE} text-[#ffb703]`}>The Wrapsters Advantage</div>
+                    <h2 className={`${HEADING_STYLE} text-white mb-24 uppercase`}>WHY CHOOSE US?</h2>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-16">
+                        {[
+                            { title: "EXPERT CRAFTSMANSHIP", icon: "Award" },
+                            { title: "PREMIUM MATERIALS", icon: "ShieldCheck" },
+                            { title: "CLIENT FOCUSED", icon: "Users" },
+                            { title: "DUBAI'S ELITE CHOICE", icon: "MapPin" }
+                        ].map((f, i) => (
+                            <div key={i} className="flex flex-col items-center group">
+                                <div className="w-28 h-28 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-[#ffb703] mb-10 group-hover:bg-[#ffb703] group-hover:text-black transition-premium transform group-hover:-translate-y-3">
+                                    <Icon name={f.icon} size={36} />
+                                </div>
+                                <h4 className="text-white font-black text-[12px] uppercase tracking-[0.25em] group-hover:text-[#ffb703] transition-premium">{f.title}</h4>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+        );
+
+        const Testimonials = () => (
+            <section className={`bg-black ${SECTION_PADDING}`}>
+                <div className="max-w-7xl mx-auto text-center">
+                    <div className={`${SUBHEADING_STYLE} text-[#ffb703]`}>Elite Feedback</div>
+                    <h2 className={`${HEADING_STYLE} text-white mb-24 uppercase`}>CLIENT SATISFACTION</h2>
+                    
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mb-28">
+                        {[
+                            { name: "Ahmed Al-Rashid", role: "PORSCHE 911 GT3 OWNER", text: "Exceptional service! My car looks brand new after their full PPF wrap. Absolute gold standard in Dubai." },
+                            { name: "Fatima Hassan", role: "RANGE ROVER OWNER", text: "Wrapsters transformed my SUV completely! The color change wrap was outstanding. Fast and premium." },
+                            { name: "Mohammed Khalil", role: "FERRARI 488 OWNER", text: "Best auto styling workshop. Consistent quality and they always finish on time. Highly recommend." }
+                        ].map((review, i) => (
+                            <div key={i} className="bg-[#0f0f0f] border border-white/5 p-12 rounded-xl text-left hover:border-[#ffb703]/30 transition-premium shadow-2xl group">
+                                <div className="flex gap-1 text-[#ffb703] mb-10">
+                                    {[...Array(5)].map((_, idx) => <Icon key={idx} name="Star" size={16} fill="#ffb703" />)}
+                                </div>
+                                <p className="text-gray-300 italic mb-12 text-[13px] leading-relaxed font-medium">"{review.text}"</p>
+                                <div className="text-white text-[12px] font-black uppercase tracking-widest group-hover:text-[#ffb703]">{review.name}</div>
+                                <div className="text-[#ffb703] text-[9px] font-black uppercase tracking-widest mt-1 opacity-80">{review.role}</div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="bg-[#ffb703] p-16 rounded-2xl text-black flex flex-col lg:flex-row items-center justify-between max-w-5xl mx-auto shadow-3xl">
+                         <div className="text-center lg:text-left mb-10 lg:mb-0">
+                             <h3 className="text-4xl font-brand uppercase tracking-widest mb-2 leading-none">JOIN OUR ELITE CIRCLE</h3>
+                             <p className="text-[11px] font-black uppercase tracking-[0.25em] opacity-80">Experience the bespoke difference today</p>
+                         </div>
+                         <div className="flex gap-16">
+                             <div className="text-center"><div className="text-4xl font-brand">5000+</div><div className="text-[9px] font-black uppercase">CARS STYLED</div></div>
+                             <div className="text-center"><div className="text-4xl font-brand">4.9</div><div className="text-[9px] font-black uppercase">GOOGLE RATING</div></div>
+                             <div className="text-center"><div className="text-4xl font-brand">99%</div><div className="text-[9px] font-black uppercase">TRUST SCORE</div></div>
+                         </div>
+                    </div>
+                </div>
+            </section>
+        );
+
+        const Guides = () => (
+            <section className={`bg-black ${SECTION_PADDING} border-t border-white/5`}>
+                <div className="max-w-7xl mx-auto">
+                    <h2 className="text-[#ffb703] text-center font-brand text-7xl md:text-8xl mb-24 uppercase tracking-[0.2em] leading-tight">
+                        CAR WRAPPING!
+                    </h2>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
+                        {[
+                            { title: "PROTECT MATTE FINISHES", date: "JANUARY 20, 2026", img: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&q=80&w=800" },
+                            { title: "ELITE AUTO TRANSFORMATION", date: "DECEMBER 29, 2025", img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=800" },
+                            { title: "SELF-HEALING PPF SCIENCE", date: "DECEMBER 19, 2025", img: "https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?auto=format&fit=crop&q=80&w=800" }
+                        ].map((post, i) => (
+                            <div key={i} className="group cursor-pointer flex flex-col items-center">
+                                <div className="w-full aspect-[4/3] overflow-hidden mb-10 border border-white/10 bg-[#111] rounded-sm relative shadow-2xl">
+                                    <img src={post.img} alt={post.title} className="w-full h-full object-cover transition-all duration-700 transform group-hover:scale-110" />
+                                </div>
+                                <h4 className="text-white font-black text-[13px] leading-relaxed mb-6 group-hover:text-[#ffb703] text-center uppercase tracking-wider">{post.title}</h4>
+                                <div className="text-gray-500 text-[11px] font-black uppercase tracking-[0.3em]">{post.date}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+        );
+
+        const TrustFeatures = () => (
+            <section className={`bg-black ${SECTION_PADDING} border-t border-white/5`}>
+                <div className="max-w-6xl mx-auto text-center">
+                    <div className={`${SUBHEADING_STYLE} text-[#ffb703]`}>Service Integrity</div>
+                    <h2 className={`${HEADING_STYLE} text-white mb-12 uppercase`}>CAR CARE YOU CAN TRUST</h2>
+                    <p className={`${BODY_STYLE} mb-24 text-white opacity-90`}>Wrapsters has been providing premium car care solutions with our team of dedicated professionals. Our experienced technicians are committed to the longevity of your vehicle.</p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-24 gap-y-16 text-left max-w-5xl mx-auto mb-20">
+                        {[
+                            { title: "Premium Products", icon: "ShieldCheck", desc: "WE USE ONLY THE HIGHEST QUALITY CLEANING PRODUCTS THAT ARE SAFE FOR YOUR VEHICLE." },
+                            { title: "Attention to Detail", icon: "Zap", desc: "OUR PROFESSIONALS PAY ATTENTION TO EVERY DETAIL TO ENSURE A PERFECT FINISH." },
+                            { title: "Fast Service", icon: "Heart", desc: "WE VALUE YOUR TIME AND ENSURE EFFICIENT SERVICE WITHOUT COMPROMISING QUALITY." },
+                            { title: "Satisfaction Guaranteed", icon: "Award", desc: "IF YOU'RE NOT COMPLETELY SATISFIED, WE'LL MAKE IT RIGHT." }
+                        ].map((f, i) => (
+                            <div key={i} className="flex gap-6 group items-start">
+                                <div className="shrink-0 text-[#ffb703] group-hover:scale-110 transition-premium mt-1">
+                                    <Icon name={f.icon} size={28} />
+                                </div>
+                                <div>
+                                    <h4 className="text-[12px] font-black uppercase tracking-widest mb-3 group-hover:text-[#ffb703] text-white transition-premium">{f.title}</h4>
+                                    <p className="text-[11px] text-white leading-relaxed font-bold uppercase tracking-widest opacity-90">{f.desc}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+        );
+
+        const CTA = () => (
+            <section className="bg-[#ffb703] py-32 px-6 text-center">
+                <div className="max-w-4xl mx-auto">
+                    <h2 className="text-black font-black text-6xl md:text-7xl mb-10 uppercase font-brand tracking-widest leading-[0.9]">READY TO TRANSFORM YOUR VEHICLE?</h2>
+                    <p className="text-black/80 text-[11px] font-black uppercase tracking-[0.4em] mb-16 leading-relaxed">Let our specialists craft your masterpiece. Book your elite consultation today.</p>
+                    <div className="flex flex-col md:flex-row justify-center gap-8">
+                        <button className={`${BUTTON_STYLE} bg-black text-white hover:scale-105 shadow-2xl px-16`}>BOOK NOW <Icon name="Calendar" size={18} /></button>
+                        <button className={`${BUTTON_STYLE} bg-white text-black hover:scale-105 shadow-xl px-16`}>CONSULT SPECIALIST <Icon name="Phone" size={18} /></button>
+                    </div>
+                </div>
+            </section>
+        );
+
+        const Footer = () => (
+            <footer className="bg-[#0a0a0a] text-white pt-32 pb-12 px-8">
+                <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-20 mb-28 text-left">
+                    <div>
+                        <div className="bg-[#ffb703] text-black px-4 py-1 italic font-black text-3xl font-brand inline-block mb-10">WRAPSTERS</div>
+                        <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.3em] leading-loose opacity-70">Dubai's leading destination for Bespoke Auto Protection and Luxury Car Wrapping. Crafting excellence for elite vehicles.</p>
+                    </div>
+                    <div>
+                        <h4 className="text-white font-black text-[12px] uppercase tracking-widest mb-10 border-b border-[#ffb703] inline-block pb-1">NAVIGATE</h4>
+                        <ul className="text-gray-500 text-[11px] font-black space-y-4 uppercase tracking-widest">
+                            <li className="hover:text-white transition-premium cursor-pointer">HOME</li>
+                            <li className="hover:text-white transition-premium cursor-pointer">SERVICES</li>
+                            <li className="hover:text-white transition-premium cursor-pointer">GALLERY</li>
+                            <li className="hover:text-white transition-premium cursor-pointer">BLOGS</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 className="text-white font-black text-[12px] uppercase tracking-widest mb-10 border-b border-[#ffb703] inline-block pb-1">LOCATION</h4>
+                        <div className="flex gap-4 text-gray-400 text-[11px] uppercase font-bold tracking-widest mb-6">
+                            <Icon name="MapPin" size={18} className="text-[#ffb703] shrink-0" />
+                            <span>Warehouse 63, ABA Avenue, Al Quoz 2, Dubai UAE</span>
+                        </div>
+                        <div className="flex gap-4 text-gray-400 text-[11px] font-black items-center">
+                            <Icon name="Phone" size={16} className="text-[#ffb703]" />
+                            <span className="text-white">+971 50 153 5251</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 className="text-white font-black text-[12px] uppercase tracking-widest mb-10 border-b border-[#ffb703] inline-block pb-1">FOLLOW</h4>
+                        <div className="flex gap-6">
+                            {['Instagram', 'Facebook', 'Youtube', 'Twitter'].map((name, i) => (
+                                <a key={i} href="#" className="text-gray-400 hover:text-[#ffb703] transition-premium">
+                                    <Icon name={name} size={22} />
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+                <div className="max-w-7xl mx-auto pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-[9px] font-black uppercase tracking-[0.4em] text-gray-600">
+                    <div>© 2026 WRAPSTERS.AE • SUBSIDIARY OF SSH GROUP</div>
+                    <div className="flex gap-10 mt-6 md:mt-0">
+                        <span>PRIVACY</span>
+                        <span>TERMS</span>
+                        <span>SSL SECURE</span>
+                    </div>
+                </div>
+            </footer>
+        );
+
+        const WhatsAppButton = () => (
+            <div className="fixed bottom-8 right-8 z-[200]">
+                <a href="https://wa.me/971501535251" target="_blank" className="bg-[#25D366] text-white p-5 rounded-full shadow-3xl flex items-center justify-center hover:scale-110 transition-premium group">
+                    <i className="fa-brands fa-whatsapp text-4xl"></i>
+                    <span className="max-w-0 overflow-hidden group-hover:max-w-xs group-hover:ml-4 transition-all duration-500 whitespace-nowrap text-[11px] font-black uppercase tracking-[0.25em]">Chat with specialist</span>
+                </a>
+            </div>
+        );
+
+        const App = () => (
+            <div className="min-h-screen flex flex-col overflow-x-hidden bg-[#0a0a0a]">
+                <Header />
+                <main>
+                    <Hero />
+                    <Services />
+                    <PPFFeature />
+                    <WhyChoose />
+                    <Testimonials />
+                    <Guides />
+                    <TrustFeatures />
+                    <CTA />
+                </main>
+                <Footer />
+                <WhatsAppButton />
+            </div>
+        );
+
+        const rootElement = document.getElementById('root');
+        if (rootElement) {
+            const root = ReactDOM.createRoot(rootElement);
+            root.render(<App />);
+        }
+    </script>
 </body>
 </html>

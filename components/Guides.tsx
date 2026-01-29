@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 const blogPosts = [
@@ -8,9 +7,9 @@ const blogPosts = [
     img: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&q=80&w=800"
   },
   {
-    title: "WHY YOU SHOULD CERAMIC COAT YOUR WHEELS AND CALIPERS TOO",
+    title: "ELITE AUTOMOTIVE TRANSFORMATION: THE ART OF BESPOKE CAR WRAPPING",
     date: "DECEMBER 29, 2025",
-    img: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&q=80&w=800"
+    img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=800"
   },
   {
     title: "THE SCIENCE BEHIND SELF-HEALING PPF: HOW IT WORKS AND WHY YOU NEED IT",
